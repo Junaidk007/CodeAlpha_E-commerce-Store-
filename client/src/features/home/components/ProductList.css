@@ -1,0 +1,81 @@
+/* Product List Section Styling */
+.product-list-section {
+  padding: 5rem 8%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Header with stretchable layout lines matching '-------- New and popular ---------' */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin-bottom: 3.5rem;
+}
+
+.header-line {
+  flex: 1;
+  height: 1px;
+  background-color: #e5e5e7;
+}
+
+.section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* 4 Cards Per Row Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem 1.5rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Responsive Grid Adapting */
+@media (max-width: 1024px) {
+  .product-list-section {
+    padding: 5rem 5%;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet size */
+    gap: 2.5rem 1.25rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .section-header {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-grid {
+    grid-template-columns: 1fr; /* Stacked cards on mobile */
+    gap: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .section-header {
+    gap: 1rem;
+  }
+}

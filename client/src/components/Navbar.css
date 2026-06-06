@@ -1,0 +1,273 @@
+/* Navbar Glassmorphism Stylesheet */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  z-index: 999;
+  
+  /* Glassmorphism Styling */
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+  
+  transition: all 0.3s ease;
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Left Section: Hamburger & Logo */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-toggle-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: #111111;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.navbar-toggle-btn:hover {
+  opacity: 0.7;
+}
+
+.navbar-logo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #111111;
+  text-decoration: none;
+  text-transform: lowercase;
+}
+
+/* Middle Section: Navigation Menu Links */
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  gap: 2.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #6a6a6a;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+/* Red/Coral active link color matching the reference image */
+.navbar-link.active {
+  color: #111111;
+}
+
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #111111;
+  transition: width 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: #111111;
+}
+
+.navbar-link.active:hover {
+  color: #111111;
+}
+
+.navbar-link:hover::after {
+  width: 100%;
+}
+
+.navbar-link.active::after {
+  background-color: #111111;
+}
+
+/* Right Section: Icon Buttons */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navbar-icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.15rem;
+  color: #111111;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.navbar-icon-btn:hover {
+  transform: scale(1.1);
+}
+
+.navbar-cart-btn {
+  position: relative;
+}
+
+/* Red/Coral circle badge for item count matching the reference image */
+.cart-badge {
+  position: absolute;
+  top: 0px;
+  right: -2px;
+  background-color: #e05a47;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ffffff;
+}
+
+/* Fullscreen Overlay Menu styling */
+.fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
+}
+
+.fullscreen-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.overlay-close-btn {
+  position: absolute;
+  top: 2rem;
+  right: 8%;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #111111;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.overlay-close-btn:hover {
+  transform: rotate(90deg);
+}
+
+.overlay-content {
+  text-align: center;
+}
+
+.overlay-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.overlay-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fullscreen-overlay.open .overlay-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.overlay-link {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #6a6a6a;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.overlay-link.active {
+  color: #111111;
+}
+
+.overlay-link:hover {
+  color: #111111;
+  transform: scale(1.05);
+}
+
+.overlay-link.active:hover {
+  color: #111111;
+}
+
+/* Responsiveness for small screens */
+@media (max-width: 992px) {
+  .navbar-menu {
+    display: none; /* Hide middle links, shown in fullscreen overlay instead */
+  }
+
+  .navbar-container {
+    padding: 0 5%;
+  }
+
+  .navbar-toggle-btn {
+    display: flex;
+  }
+}

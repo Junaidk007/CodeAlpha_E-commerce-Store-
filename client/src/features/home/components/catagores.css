@@ -1,0 +1,22 @@
+/* Category Section Styling */
+.category-section {
+    padding: 1rem;
+    background-color: #ffffff;
+}
+
+/* Card Grid Layout */
+.cardbox {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Responsive grid layouts */
+@media (max-width: 768px) {
+    .cardbox {
+        grid-template-columns: 1fr;
+        /* Stack vertically on small devices */
+        gap: 1rem;
+    }
+}
