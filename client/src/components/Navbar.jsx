@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
@@ -55,8 +56,10 @@ function Navbar() {
               <i className="fa-regular fa-user"></i>
             </button>
             <button className="navbar-icon-btn navbar-cart-btn" aria-label="Cart" id="nav-btn-cart">
+              <Link to="/checkout">
               <i className="fa-solid fa-bag-shopping"></i>
               <span className="cart-badge">7</span>
+              </Link>
             </button>
           </div>
         </div>

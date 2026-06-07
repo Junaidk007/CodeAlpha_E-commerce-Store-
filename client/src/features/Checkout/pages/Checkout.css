@@ -1,0 +1,64 @@
+/* Checkout Page Container Layout Styles */
+
+.checkout-container {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 24px 4rem 24px;
+  box-sizing: border-box;
+  align-items: start;
+  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  min-height: 80vh;
+}
+
+.checkout-items-container .checkout-card-wrapper {
+  border: none !important;
+}
+
+/* Left Column: Checkout List of Items */
+.checkout-items-container {
+  display: flex;
+  flex-direction: column;
+  /* gap: 20px; */
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+}
+
+/* Right Column: Price details summary */
+.checkout-price-container {
+  position: sticky;
+  top: 80px; /* Accounts for header height + padding spacing */
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Responsive Viewports */
+@media (max-width: 991px) {
+  .checkout-container {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 32px;
+    padding: 7rem 20px 3rem 20px;
+  }
+}
+
+@media (max-width: 868px) {
+  .checkout-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 6rem 16px 3rem 16px;
+  }
+  
+  .checkout-price-container {
+    position: static;
+    justify-content: center;
+  }
+  
+  .checkout-items-container {
+    align-items: center;
+  }
+}

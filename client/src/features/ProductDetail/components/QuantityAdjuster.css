@@ -37,7 +37,7 @@
 
 @media (max-width: 768px) {
   .quantity-adjuster {
-    width: 100%;
+    /* width: 100%; */
     justify-content: space-between;
   }
   
