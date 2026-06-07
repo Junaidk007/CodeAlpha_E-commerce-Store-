@@ -1,0 +1,325 @@
+/* Product Detail Styling - Premium Minimalist Layout */
+
+.product-detail-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 6rem 24px;
+  min-height: 80vh;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+}
+
+
+/* Core Layout Grid */
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 64px;
+  align-items: start;
+}
+
+
+
+/* Right Side: Product Details Column */
+.product-description-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #111111;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+/* Price Container */
+.price-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.product-price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.product-old-price {
+  font-size: 1.2rem;
+  color: #888888;
+  text-decoration: line-through;
+}
+
+.product-discount-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #b45309; /* warm brown/gold */
+  background-color: #fef3c7;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* Option Label Typography */
+.option-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #111111;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.selected-value {
+  font-weight: 400;
+  color: #666666;
+  text-transform: none;
+  margin-left: 4px;
+}
+
+/* Colors Selection styling */
+.colors {
+  margin-bottom: 28px;
+}
+
+.color-options-list {
+  display: flex;
+  gap: 14px;
+}
+
+.color-circle-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-circle-wrapper:hover {
+  transform: scale(1.08);
+}
+
+.color-circle-wrapper.active {
+  border-color: #111111;
+  box-shadow: 0 0 0 1px #111111;
+}
+
+.color-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sizes Selection styling */
+.sizes {
+  margin-bottom: 36px;
+}
+
+.sizes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sizes-header .option-label {
+  margin-bottom: 0;
+}
+
+.size-chart-trigger {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #111111;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.size-chart-trigger:hover {
+  opacity: 0.7;
+}
+
+.size-options-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.size-box {
+  min-width: 52px;
+  height: 42px;
+  background-color: #ffffff;
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #111111;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  transition: all 0.2s ease;
+}
+
+.size-box:hover {
+  background-color: #f7f7f7;
+  border-color: #111111;
+}
+
+.size-box.active {
+  background-color: #111111;
+  color: #ffffff;
+  border-color: #111111;
+}
+
+/* Add to Cart Actions Row */
+.product-description-section .btn {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+
+
+.add-to-cart-button {
+  flex-grow: 1;
+  height: 52px;
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.add-to-cart-button:hover {
+  background-color: #2a2a2a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.add-to-cart-button:active {
+  transform: translateY(0);
+}
+
+/* Static Product Description Section */
+.product-description {
+  border-top: 1px solid #e5e5e5;
+  padding-top: 32px;
+}
+
+.description-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #111111;
+  margin-bottom: 16px;
+}
+
+.description-text {
+  font-size: 0.95rem;
+  color: #4a4a4a;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.details-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.details-list-item {
+  font-size: 0.9rem;
+  color: #555555;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.5;
+}
+
+.bullet-point {
+  color: #111111;
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   Responsive Viewport Design Styles
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .product-detail-grid {
+    gap: 40px;
+  }
+  
+
+  
+  .product-title {
+    font-size: 1.8rem;
+  }
+  
+  .product-price {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-detail-container {
+    padding: 5rem 16px;
+  }
+  
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+
+  
+  .product-title {
+    font-size: 1.6rem;
+    margin-top: 8px;
+  }
+  
+  .product-price {
+    font-size: 1.45rem;
+  }
+  
+  .product-description-section .btn {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  
+
+  
+  .add-to-cart-button {
+    width: 100%;
+  }
+}
