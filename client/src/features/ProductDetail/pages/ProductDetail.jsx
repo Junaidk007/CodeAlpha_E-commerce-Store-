@@ -107,8 +107,8 @@ const productsData = [
         oldPrice: 56.00,
         images: ['https://cdn.shopify.com/s/files/1/1368/3463/files/BLACK_SS_ALMOST-FRIDAY-TEE-4.jpg?v=1719524881&width=1200&height=1600&crop=center', 'https://cdn.shopify.com/s/files/1/1368/3463/files/BLACK_SS_ALMOST-FRIDAY-TEE-7.jpg?v=1739917560&width=1200&height=1600&crop=center', 'https://cdn.shopify.com/s/files/1/1368/3463/files/BLACK_SS_ALMOST-FRIDAY-TEE-3CROPPED.jpg?v=1739920196&width=1200&height=1600&crop=center', 'https://cdn.shopify.com/s/files/1/1368/3463/products/BLACK-ALMOST-FRIDAY-TEE-CROPPED_860566f2-0b46-401f-901a-c345bc807c35.jpg?v=1739920196&width=1200&height=1600&crop=center'],
         colors: [
-            { name: "Optic White", hex:  "#2e2e2e"},
-            { name: "Faded Black", hex: "#ffffff" }
+            { name: "Faded Black", hex:  "#2e2e2e"},
+            { name: "Optic White", hex: "#ffffff" }
         ],
         sizes: ["XS", "S", "M", "L", "XL"],
         description: "Start the weekend mood early with this casual graphic tee. Cut from ultra-soft combed cotton, it features a custom minimalist graphic print on the chest.",
