@@ -52,11 +52,11 @@ function Navbar() {
 
           {/* Right Side: Search, Profile, Shopping Bag */}
           <div className="navbar-right">
-            <button className="navbar-icon-btn" aria-label="Profile" id="nav-btn-profile">
+            <Link to="/account/auth" className="navbar-icon-btn" aria-label="Profile" id="nav-btn-profile">
               <i className="fa-regular fa-user"></i>
-            </button>
+            </Link>
             <button className="navbar-icon-btn navbar-cart-btn" aria-label="Cart" id="nav-btn-cart">
-              <Link to="/checkout">
+              <Link to="/checkout/cart">
               <i className="fa-solid fa-bag-shopping"></i>
               <span className="cart-badge">7</span>
               </Link>

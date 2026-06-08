@@ -1,0 +1,117 @@
+/* LoginForm Component Styles */
+
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f6f6f6;
+  padding: 48px 40px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 460px;
+  box-sizing: border-box;
+}
+
+.auth-form-title {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 40px;
+  letter-spacing: 1.5px;
+  color: #111111;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.form-group label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: #777777;
+  text-align: left;
+}
+
+.auth-input {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid #c8c8c8;
+  background-color: transparent;
+  color: #111111;
+  outline: none;
+  width: 100%;
+  transition: border-bottom-color 0.25s ease;
+}
+
+.auth-input::placeholder {
+  color: #bbbbbb;
+  font-weight: 300;
+}
+
+.auth-input:focus {
+  border-bottom-color: #111111;
+}
+
+.auth-submit-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 28px;
+  cursor: pointer;
+  align-self: center;
+  min-width: 160px;
+  text-align: center;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+  margin-top: 12px;
+}
+
+.auth-submit-btn:hover {
+  background-color: #333333;
+}
+
+.auth-submit-btn:active {
+  transform: scale(0.98);
+}
+
+.forgot-password-link-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.forgot-password-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #666666;
+  text-decoration: underline;
+  transition: color 0.25s ease;
+}
+
+.forgot-password-link:hover {
+  color: #111111;
+}
+
+/* Responsive Overrides */
+@media (max-width: 480px) {
+  .login-form-container {
+    padding: 32px 24px;
+  }
+}

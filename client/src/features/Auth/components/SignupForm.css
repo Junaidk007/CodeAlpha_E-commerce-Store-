@@ -1,0 +1,158 @@
+/* SignupForm Component Styles */
+
+.signup-form-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f6f6f6;
+  padding: 48px 40px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 460px;
+  box-sizing: border-box;
+}
+
+.auth-form-title {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 40px;
+  letter-spacing: 1.5px;
+  color: #111111;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.form-group label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: #777777;
+  text-align: left;
+}
+
+.auth-input {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid #c8c8c8;
+  background-color: transparent;
+  color: #111111;
+  outline: none;
+  width: 100%;
+  transition: border-bottom-color 0.25s ease;
+}
+
+.auth-input::placeholder {
+  color: #bbbbbb;
+  font-weight: 300;
+}
+
+.auth-input:focus {
+  border-bottom-color: #111111;
+}
+
+/* Marketing Consent Checkbox Styles */
+.marketing-consent-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+}
+
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #777777;
+  border-radius: 2px;
+  background-color: transparent;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox:checked {
+  background-color: #111111;
+  border-color: #111111;
+}
+
+.custom-checkbox:checked::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: #ffffff;
+  clip-path: polygon(14% 44%, 0 58%, 38% 96%, 100% 23%, 84% 9%, 38% 68%);
+}
+
+.custom-checkbox:hover {
+  border-color: #111111;
+}
+
+.checkbox-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #555555;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+.auth-submit-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 28px;
+  cursor: pointer;
+  align-self: center;
+  min-width: 160px;
+  text-align: center;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+  margin-top: 12px;
+}
+
+.auth-submit-btn:hover {
+  background-color: #333333;
+}
+
+.auth-submit-btn:active {
+  transform: scale(0.98);
+}
+
+/* Responsive Overrides */
+@media (max-width: 480px) {
+  .signup-form-container {
+    padding: 32px 24px;
+  }
+}
