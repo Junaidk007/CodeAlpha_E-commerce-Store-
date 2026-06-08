@@ -44,20 +44,7 @@ function SignupForm() {
             className="auth-input"
           />
         </div>
-
-        {/* <div className="marketing-consent-container">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              id="signup-marketing"
-              className="custom-checkbox"
-            />
-            <span className="checkbox-text">
-              KEEP ME UP TO DATE WITH SPECIAL OFFERS AND PROMOTION
-            </span>
-          </label>
-        </div> */}
-
+        
         <button type="submit" className="auth-submit-btn" id="signup-submit-btn">
           Sign Up
         </button>
