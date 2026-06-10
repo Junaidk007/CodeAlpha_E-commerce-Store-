@@ -1,7 +1,10 @@
 const app = require('./app');
+const env = require('./config/env.config');
+const connectDB = require('./config/db.config');
 
 
+connectDB()
 
-app.listen(3000, () => {
-    console.log("server is running on port 3000")
+app.listen(env.PORT, () => {
+    console.log(`server is running on port ${env.PORT}`)
 })
