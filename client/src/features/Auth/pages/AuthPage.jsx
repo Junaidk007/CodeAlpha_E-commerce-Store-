@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import LoginForm from "../components/LoginForm";
 import SignupForm from "../components/SignupForm";
+import Toast from "../../../components/Toast"  
 import "./AuthPage.css";
 
 function AuthPage() {
+  const [data, setData] = useState()
+  const [tostMsg, setTostMsg] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [activeForm, setActiveForm] = useState("signin"); // 'signin' or 'signup'
 
@@ -22,6 +25,7 @@ function AuthPage() {
 
   return (
     <div className="auth-page-wrapper" id="auth-page-wrapper">
+      <Toast message={tostMsg}/>
       <h1 className="auth-welcome-header">Welcome!</h1>
 
       {isMobile ? (
@@ -48,9 +52,9 @@ function AuthPage() {
 
           <div className="auth-form-fade-in">
             {activeForm === "signin" ? (
-              <LoginForm />
+              <LoginForm setData={setData} setTostMsg={setTostMsg}/>
             ) : (
-              <SignupForm />
+              <SignupForm setData={setData} setTostMsg={setTostMsg}/>
             )}
           </div>
         </div>
@@ -58,10 +62,10 @@ function AuthPage() {
         // Desktop Grid (Both side-by-side)
         <div className="auth-desktop-grid" id="auth-desktop-grid">
           <div className="auth-grid-column">
-            <LoginForm />
+            <LoginForm setData={setData} setTostMsg={setTostMsg}/>
           </div>
           <div className="auth-grid-column">
-            <SignupForm />
+            <SignupForm setData={setData} setTostMsg={setTostMsg}/>
           </div>
         </div>
       )}

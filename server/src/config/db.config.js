@@ -5,7 +5,7 @@ const env = require('./env.config');
 const connectDB = async () => {
     try {
         await mongoose.connect(env.MONGO_URI);
-        console.log("mongo db is connected with host"+mongoose.connection.host);
+        console.log("mongo db is connected with mongo atlas");
 
     } catch (error) {
         console.log("mongo db is not connected"+error);

@@ -12,4 +12,4 @@ export const mainRoutes = (
     <Route path="checkout/cart" element={<Checkout />} />
     <Route path="account/auth" element={<AuthPage />} />
   </Route>
-);  
+);

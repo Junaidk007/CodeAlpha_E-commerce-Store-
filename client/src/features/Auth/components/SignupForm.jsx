@@ -1,10 +1,35 @@
 import React from "react";
 import "./SignupForm.css";
+import { registerUser } from "../../../services/apiCalls";  
+import { useState } from "react";
 
-function SignupForm() {
-  const handleSubmit = (e) => {
+function SignupForm({setData, setTostMsg}) {
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Submission handler
+   try {
+    const data = await registerUser(formData);
+    setData(data);
+    setTostMsg(data?.message)
+    console.log(data);
+   } catch (error) {
+    setData(error.response.data);
+    setTostMsg(error.response.data?.message)
+    console.log(error);
+   }
+
+   setTimeout(() => setTostMsg(""), 3000);
   };
 
   return (
@@ -20,6 +45,9 @@ function SignupForm() {
             placeholder="Name"
             required
             className="auth-input"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
           />
         </div>
 
@@ -31,6 +59,9 @@ function SignupForm() {
             placeholder="email@email.com"
             required
             className="auth-input"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
           />
         </div>
 
@@ -42,6 +73,9 @@ function SignupForm() {
             placeholder="••••••••"
             required
             className="auth-input"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
           />
         </div>
         
