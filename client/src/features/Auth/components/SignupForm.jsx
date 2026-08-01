@@ -26,7 +26,7 @@ function SignupForm({setData, setTostMsg}) {
    } catch (error) {
     setData(error.response.data);
     setTostMsg(error.response.data?.message)
-    console.log(error);
+    console.log(error.response.data.message);
    }
 
    setTimeout(() => setTostMsg(""), 3000);

@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./ProductImageSection.css";
 
-function ProductImageSection({ images = [], productName = "" }) {
-  const [activeImg, setActiveImg] = useState(images[0] || "");
+function ProductImageSection({ images = [] , activeImg, setActiveImg }) {
 
   // Sync state if the product's images list changes (navigation)
   useEffect(() => {
     if (images.length > 0) {
-      setActiveImg(images[0]);
+      setActiveImg(images[0].url);
     }
   }, [images]);
 
@@ -16,15 +15,17 @@ function ProductImageSection({ images = [], productName = "" }) {
   }
 
   const handlePrevImage = () => {
-    const currentIndex = images.indexOf(activeImg);
+    const currentIndex = images.findIndex(img => img.url === activeImg);
+    if (currentIndex === -1) return;
     const prevIndex = (currentIndex - 1 + images.length) % images.length;
-    setActiveImg(images[prevIndex]);
+    setActiveImg(images[prevIndex].url);
   };
 
   const handleNextImage = () => {
-    const currentIndex = images.indexOf(activeImg);
+    const currentIndex = images.findIndex(img => img.url === activeImg);
+    if (currentIndex === -1) return;
     const nextIndex = (currentIndex + 1) % images.length;
-    setActiveImg(images[nextIndex]);
+    setActiveImg(images[nextIndex].url);
   };
 
   return (
@@ -33,16 +34,16 @@ function ProductImageSection({ images = [], productName = "" }) {
         {images.map((img, index) => (
           <div 
             key={index} 
-            className={`thumbnail-wrapper ${activeImg === img ? "active" : ""}`}
-            onClick={() => setActiveImg(img)}
+            className={`thumbnail-wrapper ${activeImg === img.url ? "active" : ""}`}
+            onClick={() => setActiveImg(img.url)}
           >
-            <img src={img} alt={`${productName} View ${index + 1}`} className="thumbnail-img" />
+            <img src={img.url} alt={img.filename || `View ${index + 1}`} className="thumbnail-img" />
           </div>
         ))}
       </div>
 
       <div className="image-box carousel">
-        <img src={activeImg} alt={productName} className="main-product-img" />
+        <img src={activeImg} className="main-product-img" alt="Active Product" />
 
         {/* Carousel navigation arrows */}
         <button className="carousel-arrow prev-arrow" onClick={handlePrevImage} aria-label="Previous image">
@@ -57,8 +58,8 @@ function ProductImageSection({ images = [], productName = "" }) {
           {images.map((img, index) => (
             <span 
               key={index} 
-              className={`dot ${activeImg === img ? "active" : ""}`}
-              onClick={() => setActiveImg(img)}
+              className={`dot ${activeImg === img.url ? "active" : ""}`}
+              onClick={() => setActiveImg(img.url)}
             ></span>
           ))}
         </div>

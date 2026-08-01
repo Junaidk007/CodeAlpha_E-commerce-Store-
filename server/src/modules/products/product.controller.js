@@ -4,7 +4,7 @@ const ApiError = require('../../utils/ApiError');
 
 
 module.exports.fetchProduct = async (req, res) => {
-    const products = await product.find();
+    const products = await product.find().select('-variants');
     res.json(new ApiResponse(200, 'Products fetched successfully', products));
 }
 
@@ -20,7 +20,7 @@ module.exports.fetchProductById = async (req, res) => {
 }
 
 module.exports.createProduct = async (req, res) => {
-    const { title, description, price, highlights, variants, isFeatured } = req.body;
-    const products = await product.create({ title, description, price, highlights, variants, isFeatured });
+    const { title, description, price, highlights, variants, isFeatured, featuredImage } = req.body;
+    const products = await product.create({ title, description, price, highlights, variants, isFeatured, featuredImage });
     res.json(new ApiResponse(200, 'Products created successfully', products));
 }

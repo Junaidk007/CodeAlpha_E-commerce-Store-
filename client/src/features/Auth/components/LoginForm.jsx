@@ -1,8 +1,12 @@
 import "./LoginForm.css";
 import { loginUser } from "../../../services/apiCalls";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks";
 
 function LoginForm({setData, setTostMsg}) {
+    const { login } = useAuth();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
       email: "",
       password: "",
@@ -18,16 +22,18 @@ function LoginForm({setData, setTostMsg}) {
       
      try {
       const data = await loginUser(formData);
-      setData(data);
-      setTostMsg(data?.message)
+      if (setData) setData(data);
+      if (setTostMsg) setTostMsg(data?.message);
+      login(data);
       console.log(data);
      } catch (error) {
-      setData(error.response.data);
-      setTostMsg(error.response.data?.message)
+      if (setData) setData(error.response?.data);
+      if (setTostMsg) setTostMsg(error.response?.data?.message);
       console.log(error);
      }
   
-     setTimeout(() => setTostMsg(""), 3000);
+     if (setTostMsg) setTimeout(() => setTostMsg(""), 3000);
+     navigate("/");
     };
   
 

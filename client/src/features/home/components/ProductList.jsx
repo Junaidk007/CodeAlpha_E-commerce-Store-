@@ -1,29 +1,24 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import "./ProductList.css";
 import ProductCard from "./ProductCard";
-
-// Import product images
-import oversizedt from "../../../assets/products/oversizedt.jpg";
-import blazerImg from "../../../assets/products/blazer.png";
-import knitwearImg from "../../../assets/products/knitwear.png";
-import trousersImg from "../../../assets/products/trousers.png";
-import topImg from '../../../assets/products/top.webp'
-import checkshirt from '../../../assets/products/checkshirt.webp'
-import poloT from '../../../assets/products/poloT.webp'
-import oversizedTshirt from '../../../assets/products/oversized-tshirt.webp'
-
-const productsList = [
-  { id: 1, image: oversizedt, name: "Men's Black Oversized T-shirt", price: 56.00, oldPrice: 130.00 },
-  { id: 2, image: blazerImg, name: "Minimalist Linen Blazer", price: 89.00, oldPrice: 160.00 },
-  { id: 3, image: knitwearImg, name: "Oversized Knit Sweater", price: 74.00, oldPrice: 120.00 },
-  { id: 4, image: trousersImg, name: "Tailored Pleated Trousers", price: 65.00, oldPrice: 110.00 },
-  { id: 5, image: topImg, name: "Almost Friday Tee", price: 32.00, oldPrice: 56.00 },
-  { id: 6, image: checkshirt, name: "Regular Fit Checks Shirt", price: 74.00, oldPrice: 120.00 },
-  { id: 7, image: poloT, name: "Nordic Beige Polo T-Shirt", price: 32.00, oldPrice: 56.00 },
-  { id: 8, image: oversizedTshirt, name: "Beige Graphic Printed Oversized T-shirt", price: 100.00, oldPrice: 220.00 },
-];
+import { getAllProducts } from "../../../services/apiCalls";
 
 function ProductList() {
+
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getAllProducts();
+        setProducts(response.data);
+      }
+      catch (error){ 
+        console.log(error);
+      }
+    };
+    fetchProducts();
+  }, []);
   return (
     <section className="product-list-section" id="product-section">
       {/* Header layout matching the blueprint: -------- New and popular --------- */}
@@ -35,14 +30,13 @@ function ProductList() {
 
       {/* Grid container with 4 cards per row */}
       <div className="product-grid">
-        {productsList.map((product) => (
+        {products.map((product) => (
           <ProductCard
-            key={product.id}
-            id={product.id}
-            image={product.image}
-            name={product.name}
+            key={product._id}
+            id={product._id}
+            image={product.featuredImage.url}
+            name={product.title}
             price={product.price}
-            oldPrice={product.oldPrice}
           />
         ))}
       </div>

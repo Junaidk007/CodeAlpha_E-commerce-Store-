@@ -7,6 +7,28 @@ const cartItemSchema = new mongoose.Schema({
         required: true
     },
 
+    image: {
+        url: {
+            type: String,
+            required: true
+        },
+        filename: {
+            type: String,
+            required: true
+        }
+    },
+
+    color: {
+        name: {
+            type: String,
+            required: true
+        },
+        hex: {
+            type: String,
+            required: true
+        }
+    },
+
     quantity: {
         type: Number,
         default: 1,

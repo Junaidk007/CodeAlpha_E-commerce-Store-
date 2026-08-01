@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useCart, useAuth } from "../hooks";
 import "./Navbar.css";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cartCount } = useCart();
+  const { isAuthenticated, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -57,8 +60,8 @@ function Navbar() {
             </Link>
             <button className="navbar-icon-btn navbar-cart-btn" aria-label="Cart" id="nav-btn-cart">
               <Link to="/checkout/cart">
-              <i className="fa-solid fa-bag-shopping"></i>
-              <span className="cart-badge">7</span>
+                <i className="fa-solid fa-bag-shopping"></i>
+                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
               </Link>
             </button>
           </div>

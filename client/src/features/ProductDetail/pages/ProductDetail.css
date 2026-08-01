@@ -323,3 +323,60 @@
     width: 100%;
   }
 }
+
+/* Stock Status Badge */
+.stock-status {
+  margin-bottom: 24px;
+}
+.badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.in-stock-badge {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+.low-stock-badge {
+  background-color: #fef7e0;
+  color: #b06000;
+}
+.out-of-stock-badge {
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+/* Size box out of stock styling */
+.size-box:disabled, .size-box.out-of-stock {
+  opacity: 0.4;
+  background-color: #f3f3f3;
+  border-color: #e0e0e0;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+/* Loading and Error States */
+.product-detail-loading, .product-detail-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  font-family: 'Inter', sans-serif;
+  color: #666;
+  gap: 16px;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top: 3px solid #111111;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

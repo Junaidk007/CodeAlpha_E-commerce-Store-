@@ -58,7 +58,19 @@ const productSchema = Joi.object({
             )
         })
     ),
-    isFeatured: Joi.boolean().default(false)
+    isFeatured: Joi.boolean().default(false),
+    featuredImage: Joi.object({
+        url: Joi.string().required().messages({
+            'string.empty': 'Featured image URL is required',
+            'any.required': 'Featured image URL is required'
+        }),
+        filename: Joi.string().required().messages({
+            'string.empty': 'Featured image filename is required',
+            'any.required': 'Featured image filename is required'
+        })
+    }).required().messages({
+        'any.required': 'Featured image is required'
+    })
 });
 
 const createProductValidation = (req, res, next) => {

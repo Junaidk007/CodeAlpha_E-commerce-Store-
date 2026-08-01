@@ -20,7 +20,7 @@ function CheckOutCard({ product = {}, onRemove, onQuantityChange }) {
     return (
         <div className="checkout-card-wrapper">
             <div className="checkout-card-image-container">
-                <img src={currentProduct.image} alt={currentProduct.name} className="checkout-card-img" />
+                <img src={currentProduct.image.url} alt={currentProduct.image.filename} className="checkout-card-img" />
             </div>
             <div className="checkout-card-content">
                 <div className="checkout-card-top">

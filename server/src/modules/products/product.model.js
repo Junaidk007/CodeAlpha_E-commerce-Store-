@@ -64,6 +64,17 @@ const productSchema = new mongoose.Schema({
         }
     ],
 
+    featuredImage: {
+        url: {
+            type: String,
+            required: true
+        },
+        filename: {
+            type: String,
+            required: true
+        }
+    },
+
     isFeatured: {
         type: Boolean,
         default: false

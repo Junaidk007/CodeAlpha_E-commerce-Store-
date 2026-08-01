@@ -12,11 +12,11 @@ module.exports.fetchCart = async (req, res) => {
 };
 
 module.exports.addToCart = async (req, res) => {
-    const { product, quantity, size } = req.body;
+    const { product, quantity, size, color, image } = req.body;
     const userId = req.user._id;
 
     if (!product) {
-        throw new ApiError(400, 'Product is required');
+        throw new ApiError(400, 'Product id is required');
     }
 
     const productExists = await Product.findById(product);
@@ -29,20 +29,24 @@ module.exports.addToCart = async (req, res) => {
     if (!cart) {
         cart = await Cart.create({
             user: userId,
-            items: [{ product, quantity: quantity || 1, size }]
+            items: [{ product, quantity: quantity || 1, size, color, image }]
         });
     } else {
         const existingItemIndex = cart.items.findIndex(
-            (item) => item.product.toString() === product && item.size === size
+            (item) => item.product.toString() === product && item.size === size && item.color.name === color.name
         );
 
         if (existingItemIndex > -1) {
             cart.items[existingItemIndex].quantity += (quantity || 1);
         } else {
-            cart.items.push({ product, quantity: quantity || 1, size });
+            cart.items.push({ product, quantity: quantity || 1, size, color, image });
         }
 
+        // productExists.variants.sizes.find(i => i.size === size).stock -= (quantity || 1);
+
+
         await cart.save();
+        await productExists.save();
     }
 
     await cart.populate('items.product');
@@ -52,7 +56,7 @@ module.exports.addToCart = async (req, res) => {
 
 
 module.exports.updateCart = async (req, res) => {
-    const { productId, quantity } = req.body;
+    const { productId, quantity, size, color } = req.body;
     const userId = req.user._id;
 
     if (!productId || !quantity) {
@@ -66,7 +70,7 @@ module.exports.updateCart = async (req, res) => {
     }
 
     const existingItemIndex = cart.items.findIndex(
-        (item) => item.product.toString() === productId
+        (item) => item.product.toString() === productId && item.size === size && item.color.name === color.name
     );
 
     if (existingItemIndex > -1) {
@@ -79,4 +83,32 @@ module.exports.updateCart = async (req, res) => {
     await cart.populate('items.product');
 
     res.json(new ApiResponse(200, 'Item updated successfully', cart));
+};
+
+module.exports.deleteCartItem = async (req, res) => {
+    const { productId, size, color } = req.body;
+    const userId = req.user._id;
+
+    if (!productId) {
+        throw new ApiError(400, 'Product id is required');
+    }
+
+    let cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+        throw new ApiError(404, 'Cart not found');
+    }
+
+    cart.items = cart.items.filter((item) => {
+        const matchesProduct = item.product.toString() === productId;
+        const matchesSize = size ? item.size === size : true;
+        const colorName = typeof color === 'object' ? color?.name : color;
+        const matchesColor = colorName ? item.color?.name === colorName : true;
+        return !(matchesProduct && matchesSize && matchesColor);
+    });
+
+    await cart.save();
+    await cart.populate('items.product');
+
+    res.json(new ApiResponse(200, 'Item removed from cart successfully', cart));
 };
