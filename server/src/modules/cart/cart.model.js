@@ -38,6 +38,11 @@ const cartItemSchema = new mongoose.Schema({
     size: {
         type: String,
         enum: ["XS", "S", "M", "L", "XL", "XXL"]
+    },
+
+    stock: {
+        type: Number,
+        required: true
     }
 }, { _id: false });
 

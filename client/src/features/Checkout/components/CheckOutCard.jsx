@@ -39,6 +39,7 @@ function CheckOutCard({ product = {}, onRemove, onQuantityChange }) {
 
                         <QuantityAdjuster 
                             quantity={currentProduct.quantity} 
+                            stock={currentProduct.stock}
                             onChange={(qty) => onQuantityChange && onQuantityChange(currentProduct.id, qty)} 
                         />
                     </div>

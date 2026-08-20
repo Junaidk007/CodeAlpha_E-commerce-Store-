@@ -1,7 +1,8 @@
 import axios from "axios";
 
 
-const API = "http://localhost:5000/api"
+const API = "https://codealpha-e-commerce-store-q4ln.onrender.com/api" 
+// "http://localhost:5000/api"
 
 export const registerUser = async (data) => {
     const response = await axios.post(

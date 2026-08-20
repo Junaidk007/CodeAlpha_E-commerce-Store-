@@ -30,6 +30,7 @@ function Checkout() {
     return (
         <div className="checkout-container">
             <div className="checkout-items-container">
+                {console.log("cartItems",cartItems)}
                 {cartItems.map((item, index) => (
                     <CheckOutCard
                         key={index}
@@ -41,6 +42,7 @@ function Checkout() {
                             size: item.size || "N/A",
                             color: typeof item.color === "object" ? item.color.name : item.color || "N/A",
                             quantity: item.quantity || 1,
+                            stock: item.stock || 0,
                         }}
                         onRemove={() => handleRemove(item)}
                         onQuantityChange={(id, qty) => handleQuantityChange(item, qty)}

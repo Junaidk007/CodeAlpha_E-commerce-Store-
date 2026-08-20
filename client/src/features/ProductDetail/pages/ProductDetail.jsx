@@ -117,13 +117,13 @@ function ProductDetail() {
         const response = await addToCart(data, token);
         contextAddToCart(data);
 
+        console.log(response)
+
         setCartMessage(response?.message || "Added to cart successfully!");
         setTimeout(() => setCartMessage(""), 3500);
 
     } catch (e) {
-        // Still save locally in context as fallback
-        contextAddToCart(data);
-        setCartMessage(e.message || "Item added to local cart");
+        setCartMessage(e.message);
         setTimeout(() => setCartMessage(""), 3500);
     }
 };

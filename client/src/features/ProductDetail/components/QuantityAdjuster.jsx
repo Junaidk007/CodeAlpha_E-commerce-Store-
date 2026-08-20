@@ -1,7 +1,7 @@
 import React from "react";
 import "./QuantityAdjuster.css";
 
-function QuantityAdjuster({ quantity = 1, onChange }) {
+function QuantityAdjuster({ quantity = 1, onChange, stock }) {
   const handleDecrease = () => {
     if (quantity > 1 && onChange) {
       onChange(quantity - 1);
@@ -19,6 +19,7 @@ function QuantityAdjuster({ quantity = 1, onChange }) {
       <button 
         className="qty-btn" 
         onClick={handleDecrease}
+        disabled={quantity <=1}
         aria-label="Decrease Quantity"
       >
         <i className="fa-solid fa-minus"></i>
@@ -27,6 +28,7 @@ function QuantityAdjuster({ quantity = 1, onChange }) {
       <button 
         className="qty-btn" 
         onClick={handleIncrease}
+        disabled={quantity >= stock}
         aria-label="Increase Quantity"
       >
         <i className="fa-solid fa-plus"></i>

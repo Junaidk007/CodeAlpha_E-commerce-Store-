@@ -35,6 +35,14 @@ export const CartProvider = ({ children }) => {
       if (response && response.data && Array.isArray(response.data.items)) {
         const formattedItems = response.data.items.map((item) => {
           const prod = typeof item.product === "object" ? item.product : {};
+          const variant = prod.variants.find(
+            (variant) => variant.color.name === item.color.name
+          );
+
+          const sizeData = variant?.sizes.find(
+            (s) => s.size === item.size
+          );
+          const currentStock = sizeData?.stock ?? 0;    
           return {
             _id: prod._id || item.product,
             product: prod._id || item.product,
@@ -44,6 +52,7 @@ export const CartProvider = ({ children }) => {
             size: item.size,
             color: item.color,
             image: item.image || prod.variants?.[0]?.images?.[0] || "",
+            stock: currentStock || 0,
           };
         });
         setCartItems(formattedItems);

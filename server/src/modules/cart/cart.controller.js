@@ -40,19 +40,15 @@ module.exports.addToCart = async (req, res) => {
             cart.items[existingItemIndex].quantity += (quantity || 1);
         } else {
             cart.items.push({ product, quantity: quantity || 1, size, color, image });
+
+            await cart.save();
         }
 
-        // productExists.variants.sizes.find(i => i.size === size).stock -= (quantity || 1);
+        await cart.populate('items.product');
 
-
-        await cart.save();
-        await productExists.save();
-    }
-
-    await cart.populate('items.product');
-
-    res.json(new ApiResponse(200, 'Item added to cart successfully', cart));
-};
+        res.json(new ApiResponse(200, 'Item added to cart successfully', cart));
+    };
+}    
 
 
 module.exports.updateCart = async (req, res) => {
@@ -111,4 +107,4 @@ module.exports.deleteCartItem = async (req, res) => {
     await cart.populate('items.product');
 
     res.json(new ApiResponse(200, 'Item removed from cart successfully', cart));
-};
+}

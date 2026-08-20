@@ -8,6 +8,5 @@ router.get('/', verifyUser, wrapAsync(fetchCart));
 router.post('/add', verifyUser, wrapAsync(addToCart));
 router.put('/', verifyUser, wrapAsync(updateCart));
 router.delete('/remove', verifyUser, wrapAsync(deleteCartItem));
-router.delete('/', verifyUser, wrapAsync(deleteCartItem));
 
 module.exports = router;
