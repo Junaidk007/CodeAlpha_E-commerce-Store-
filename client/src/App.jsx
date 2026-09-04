@@ -1,7 +1,7 @@
 
 import { Routes } from "react-router-dom";
 import { mainRoutes } from "./routes/MainRoute.jsx";
-import { AuthProvider } from "./context/authContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import { GlobalProvider } from "./context/GlobalContext.jsx";
 import { ProductProvider } from "./context/ProductContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
