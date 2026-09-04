@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'http://localhost:5000/api'
+    baseURL: 'https://codealpha-e-commerce-store-q4ln.onrender.com/api' || 'http://localhost:5000/api'
 });
 
 // Product routes
