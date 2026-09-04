@@ -9,7 +9,7 @@ import useGlobal from '../../../hooks/useGlobal.js';
 
 function Checkout() {
     const { token } = useAuth();
-    const { cart, cartCount, fetchCart, updateCartItem, removeFromCart } = useCart();
+    const { cart, fetchCart, updateCartItem, removeFromCart } = useCart();
     const { setToast } = useGlobal();
 
     // Fetch the cart from the backend when this page first loads
