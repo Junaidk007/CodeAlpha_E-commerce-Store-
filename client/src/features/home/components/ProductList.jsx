@@ -1,24 +1,23 @@
 import { useState, useEffect } from "react";
 import "./ProductList.css";
 import ProductCard from "./ProductCard";
-import { getAllProducts } from "../../../services/apiCalls";
+import { mockProducts } from "../../../data/mockProducts";
+import CircularProgress from '@mui/material/CircularProgress';
+import useProduct from "../../../hooks/useProduct";
+import useGlobal from "../../../hooks/useGlobal.js";
 
 function ProductList() {
-
-  const [products, setProducts] = useState([]);
+  const {loading} = useGlobal();
+  const { products, fetchProd } = useProduct();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getAllProducts();
-        setProducts(response.data);
-      }
-      catch (error){ 
-        console.log(error);
-      }
-    };
-    fetchProducts();
+    if (!products.length) {
+      fetchProd();
+    }
   }, []);
+
+
+
   return (
     <section className="product-list-section" id="product-section">
       {/* Header layout matching the blueprint: -------- New and popular --------- */}
@@ -29,17 +28,24 @@ function ProductList() {
       </div>
 
       {/* Grid container with 4 cards per row */}
-      <div className="product-grid">
-        {products.map((product) => (
-          <ProductCard
+      {loading ? (
+        <div className="loading">
+          <CircularProgress size="4rem"  color="inherit" />
+        </div>
+      ) : (
+        <div className="product-grid">
+          {products.map((product) => (
+            <ProductCard
             key={product._id}
             id={product._id}
             image={product.featuredImage.url}
             name={product.title}
             price={product.price}
+            oldPrice={product.oldPrice}
           />
         ))}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

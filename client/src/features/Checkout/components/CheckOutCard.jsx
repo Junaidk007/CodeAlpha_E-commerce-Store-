@@ -1,60 +1,57 @@
 import React from "react";
 import QuantityAdjuster from "../../ProductDetail/components/QuantityAdjuster";
-import poloT from "../../../assets/products/poloT.webp";
 import "./CheckOutCard.css";
 
-function CheckOutCard({ product = {}, onRemove, onQuantityChange }) {
-    // Default mockup details matching the polo shirt reference image
-    const defaultProduct = {
-        id: 7,
-        name: "Contrast Tipping Zipper Polo T-Shirt",
-        price: 1299,
-        image: poloT,
-        size: "S",
-        color: "Green",
-        quantity: 1
-    };
+// CheckOutCard displays a single item in the checkout/cart page.
+//
+// Props:
+//   product  — object with: { name, price, image, size, color, quantity, stock }
+//   onRemove — called with no args when the trash button is clicked
+//   onQuantityChange — called with (newQty) when quantity changes
+function CheckOutCard({ product, onRemove, onQuantityChange }) {
 
-    const currentProduct = { ...defaultProduct, ...product };
+    // image can be a string URL or an object like { url, filename } from Cloudinary
+    const imgSrc = typeof product.image === "object" ? product.image?.url : product.image;
 
     return (
         <div className="checkout-card-wrapper">
             <div className="checkout-card-image-container">
-                <img src={currentProduct.image.url} alt={currentProduct.image.filename} className="checkout-card-img" />
+                <img src={imgSrc} alt={product.name} className="checkout-card-img" />
             </div>
             <div className="checkout-card-content">
                 <div className="checkout-card-top">
-                    {/* top part  */}
                     <div className="checkout-card-info">
-                        {/* right side  */}
-                        <h2>{currentProduct.name}</h2>
-                        
+                        <h2>{product.name}</h2>
+
                         <div className="checkout-card-meta">
-                            <span>{currentProduct.size}</span>
+                            <span>{product.size}</span>
                             <span className="meta-separator">|</span>
-                            <span>{currentProduct.color}</span>
+                            <span>{product.color}</span>
                             <span className="meta-separator">|</span>
-                            <span className="meta-qty-label">QTY: {currentProduct.quantity}</span>
+                            <span className="meta-qty-label">QTY: {product.quantity}</span>
                         </div>
 
-                        <QuantityAdjuster 
-                            quantity={currentProduct.quantity} 
-                            stock={currentProduct.stock}
-                            onChange={(qty) => onQuantityChange && onQuantityChange(currentProduct.id, qty)} 
+                        {/* QuantityAdjuster calls onQuantityChange(newQty) directly */}
+                        <QuantityAdjuster
+                            quantity={product.quantity}
+                            stock={product.stock}
+                            onChange={(qty) => onQuantityChange && onQuantityChange(qty)}
                         />
                     </div>
                     <div className="checkout-card-remove-container">
-                        {/* left side */}
-                        <button className="checkout-remove-btn" onClick={() => onRemove && onRemove(currentProduct.id)} aria-label="Remove item">
+                        <button
+                            className="checkout-remove-btn"
+                            onClick={() => onRemove && onRemove()}
+                            aria-label="Remove item"
+                        >
                             <i className="fa-regular fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
                 <div className="checkout-card-bottom">
-                    {/* bottom part  */}
+                    {/* Unit price × quantity = line total */}
                     <p className="checkout-card-price">
-                        {/* price will be shown on right corrner */}
-                        ₹{currentProduct.price}
+                        ₹{product.price * product.quantity}
                     </p>
                 </div>
             </div>

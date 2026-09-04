@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SignupForm.css";
-import { registerUser } from "../../../services/apiCalls";  
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import CircularProgress from '@mui/material/CircularProgress';
 
-function SignupForm({setData, setTostMsg}) {
+function SignupForm({ signUp, loading }) {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -12,25 +13,16 @@ function SignupForm({setData, setTostMsg}) {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    setFormData(prev => ({...prev, [e.target.name] : e.target.value}));
+  }
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-   try {
-    const data = await registerUser(formData);
-    setData(data);
-    setTostMsg(data?.message)
-    console.log(data);
-   } catch (error) {
-    setData(error.response.data);
-    setTostMsg(error.response.data?.message)
-    console.log(error.response.data.message);
-   }
+    await signUp(formData);
+    console.log(formData)
 
-   setTimeout(() => setTostMsg(""), 3000);
-  };
+  }
+  
 
   return (
     <div className="signup-form-container" id="signup-form-container">
@@ -79,8 +71,8 @@ function SignupForm({setData, setTostMsg}) {
           />
         </div>
         
-        <button type="submit" className="auth-submit-btn" id="signup-submit-btn">
-          Sign Up
+        <button type="submit" className="auth-submit-btn" id="signup-submit-btn" disabled={loading}>
+          {loading ? <CircularProgress size="1rem"  color="inherit" /> : "Sign Up"}
         </button>
       </form>
     </div>

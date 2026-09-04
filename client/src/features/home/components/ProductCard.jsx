@@ -1,8 +1,10 @@
 import React from "react";
 import "./ProductCard.css";
 import { Link } from "react-router-dom";
+import useCart from "../../../hooks/useCart";
 
 function ProductCard({ id, image, name, price, oldPrice }) {
+  const {addToCart} = useCart();
   return (
     <div className="product-card">
       <div className="product-image-wrapper">
@@ -10,7 +12,7 @@ function ProductCard({ id, image, name, price, oldPrice }) {
           <img src={image} alt={name} className="product-card-img" />
         </Link>
         {/* Quick add shopping bag button overlay for rich experience */}
-        <button className="product-quick-add-btn" aria-label="Quick Add to Bag">
+        <button className="product-quick-add-btn" onClick={() => addToCart(id,{size: "", color: "", quantity: 1})} aria-label="Quick Add to Bag">
           <i className="fa-solid fa-plus"></i>
         </button>
       </div>

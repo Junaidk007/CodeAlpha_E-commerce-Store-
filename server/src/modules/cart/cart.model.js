@@ -43,6 +43,11 @@ const cartItemSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: true
+    },
+
+    price: {
+        type: Number,
+        required: true
     }
 }, { _id: false });
 
@@ -52,6 +57,12 @@ const cartSchema = new mongoose.Schema({
         ref: "User",
         required: true,
         unique: true
+    },
+
+    totalCount: {
+        type : Number,
+        default : 0,
+        required : true
     },
 
     items: [cartItemSchema]

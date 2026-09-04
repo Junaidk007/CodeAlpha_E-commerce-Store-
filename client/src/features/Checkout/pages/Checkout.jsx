@@ -1,28 +1,71 @@
+import { useEffect } from "react";
 import CheckOutCard from "../components/CheckOutCard";
 import PriceDetailCard from "../components/PriceDetailCard";
-import { useCart } from "../../../hooks";
 import "./Checkout.css";
+import useAuth from "../../../hooks/useAuth.js";
+import { Link } from "react-router-dom";
+import useCart from "../../../hooks/useCart.js";
+import useGlobal from '../../../hooks/useGlobal.js';
 
 function Checkout() {
-    const { cartItems, cartTotal, updateQuantity, removeFromCart } = useCart();
+    const { token } = useAuth();
+    const { cart, cartCount, fetchCart, updateCartItem, removeFromCart } = useCart();
+    const { setToast } = useGlobal();
 
-    const handleQuantityChange = (item, newQty) => {
-        const itemId = item._id || item.product;
-        const colorName = item.color?.name || item.color;
-        updateQuantity(itemId, colorName, item.size, newQty);
+    // Fetch the cart from the backend when this page first loads
+    useEffect(() => {
+        fetchCart();
+    }, []);
+
+    // Called when the user changes quantity on a cart item
+    // This calls the backend API (not just local state) so changes persist on refresh
+    const handleQuantityChange = async (item, newQty) => {
+        await updateCartItem(item, newQty);
     };
 
-    const handleRemove = (item) => {
-        const itemId = item._id || item.product;
-        const colorName = item.color?.name || item.color;
-        removeFromCart(itemId, colorName, item.size);
+    // Called when the user clicks the trash icon on a cart item
+    // This calls the backend API to actually remove the item from the DB
+    const handleRemove = async (item) => {
+        await removeFromCart(item);
     };
 
-    if (!cartItems || cartItems.length === 0) {
+    const handleCheckout = () => {
+        setToast({ message: "Order placed successfully! Thank you for shopping.", success: true });
+    };
+
+    // Calculate the bag total:
+    // item.price is stored as the UNIT price (price for 1 item)
+    // We multiply by quantity here on the frontend
+    const bagTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+    // Simple discount logic: ₹500 off for orders over ₹2000, ₹200 off for orders over ₹1000
+    const productDiscount = bagTotal > 2000 ? 500 : (bagTotal > 1000 ? 200 : 0);
+
+    // ─── Guard: user not logged in ────────────────────────────────────────────
+    if (!token) {
         return (
-            <div className="checkout-empty-container" style={{ padding: "40px", textAlign: "center" }}>
-                <h2>Your Shopping Bag is Empty</h2>
-                <p>Browse our products and add items to your cart.</p>
+            <div className="checkout-empty-container" style={{ padding: "100px 20px", textAlign: "center", minHeight: "50vh" }}>
+                <h2 style={{ fontSize: "1.8rem", marginBottom: "12px", color: "#111" }}>Please Login to Continue</h2>
+                <p style={{ color: "#666", marginBottom: "24px" }}>Login to your account to continue shopping.</p>
+                <Link
+                    to="/account/auth"
+                    style={{ display: "inline-block", padding: "12px 28px", background: "#111", color: "#fff", textDecoration: "none", borderRadius: "4px", fontSize: "0.9rem", letterSpacing: "1px" }}
+                >
+                    Login
+                </Link>
+            </div>
+        );
+    }
+
+    // ─── Guard: cart is empty ─────────────────────────────────────────────────
+    if (!cart || cart.length === 0) {
+        return (
+            <div className="checkout-empty-container" style={{ padding: "80px 20px", textAlign: "center", minHeight: "50vh" }}>
+                <h2 style={{ fontSize: "1.8rem", marginBottom: "12px", color: "#111" }}>Your Shopping Bag is Empty</h2>
+                <p style={{ color: "#666", marginBottom: "24px" }}>Browse our minimalist collections and add items to your cart.</p>
+                <a href="/" style={{ display: "inline-block", padding: "12px 28px", background: "#111", color: "#fff", textDecoration: "none", borderRadius: "4px", fontSize: "0.9rem", letterSpacing: "1px" }}>
+                    CONTINUE SHOPPING
+                </a>
             </div>
         );
     }
@@ -30,27 +73,27 @@ function Checkout() {
     return (
         <div className="checkout-container">
             <div className="checkout-items-container">
-                {console.log("cartItems",cartItems)}
-                {cartItems.map((item, index) => (
+                {cart.map((item, index) => (
                     <CheckOutCard
-                        key={index}
+                        key={`${item.product?._id || item.product}-${item.size}-${item.color?.name}-${index}`}
                         product={{
-                            id: item._id || item.product,
-                            name: item.title || "Product",
-                            price: item.price || 0,
+                            // After populate(), the product name lives at item.product.title
+                            name: item.product?.title || "Product",
+                            price: item.price,         // unit price — CheckOutCard multiplies by qty
                             image: item.image || "",
                             size: item.size || "N/A",
-                            color: typeof item.color === "object" ? item.color.name : item.color || "N/A",
+                            // color is stored as { name, hex } — display just the name string
+                            color: item.color?.name || "N/A",
                             quantity: item.quantity || 1,
-                            stock: item.stock || 0,
+                            stock: item.stock || 10,
                         }}
                         onRemove={() => handleRemove(item)}
-                        onQuantityChange={(id, qty) => handleQuantityChange(item, qty)}
+                        onQuantityChange={(qty) => handleQuantityChange(item, qty)}
                     />
                 ))}
             </div>
             <div className="checkout-price-container">
-                <PriceDetailCard bagTotal={cartTotal} productDiscount={0} />
+                <PriceDetailCard bagTotal={bagTotal} productDiscount={productDiscount} onCheckout={handleCheckout} />
             </div>
         </div>
     );

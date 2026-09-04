@@ -1,211 +1,108 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { fetchCart, updateCart as updateCartApi, deleteCartItem as deleteCartApi } from "../services/apiCalls";
+import { createContext, useState } from "react";
+import useAuth from "../hooks/useAuth";
+import useGlobal from "../hooks/useGlobal";
+import { getCart, addToCart, updateCart, deleteCartItem } from "../service/api";
 
-const CartContext = createContext(null);
+export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState(() => {
-    try {
-      const savedCart = localStorage.getItem("cartItems");
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch (e) {
-      return [];
-    }
-  });
+    const { loading, setLoading, setToast } = useGlobal();
+    const { token } = useAuth();
 
-  const [loading, setLoading] = useState(false);
+    // `cart` is the array of cart items (each item has product, size, color, quantity, price, etc.)
+    const [cart, setCart] = useState([]);
 
-  // Sync cart items with localStorage for persistence
-  useEffect(() => {
-    try {
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    } catch (e) {
-      console.error("Failed to save cart to localStorage", e);
-    }
-  }, [cartItems]);
+    // `cartCount` is the total number of items (used for the navbar badge)
+    const [cartCount, setCartCount] = useState(0);
 
-  // Fetch cart from backend API
-  const loadCart = useCallback(async (authToken) => {
-    const token = authToken || localStorage.getItem("token");
-    if (!token) return;
+    // ─── Helper: update both cart state and count from an API response ───────────
+    // Every API call returns the full updated cart — we always sync state from it
+    const syncCartState = (cartData) => {
+        setCart(cartData.items || []);
+        setCartCount(cartData.totalCount || 0);
+    };
 
-    try {
-      setLoading(true);
-      const response = await fetchCart(token);
-      if (response && response.data && Array.isArray(response.data.items)) {
-        const formattedItems = response.data.items.map((item) => {
-          const prod = typeof item.product === "object" ? item.product : {};
-          const variant = prod.variants.find(
-            (variant) => variant.color.name === item.color.name
-          );
-
-          const sizeData = variant?.sizes.find(
-            (s) => s.size === item.size
-          );
-          const currentStock = sizeData?.stock ?? 0;    
-          return {
-            _id: prod._id || item.product,
-            product: prod._id || item.product,
-            title: prod.title || "Product",
-            price: prod.price || 0,
-            quantity: item.quantity || 1,
-            size: item.size,
-            color: item.color,
-            image: item.image || prod.variants?.[0]?.images?.[0] || "",
-            stock: currentStock || 0,
-          };
-        });
-        setCartItems(formattedItems);
-      }
-    } catch (e) {
-      console.error("Error fetching cart from backend:", e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Sync with backend on initial load if token exists
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      loadCart(token);
-    }
-  }, [loadCart]);
-
-  const addToCart = useCallback((newItem) => {
-    setCartItems((prevItems) => {
-      // Find matching item based on product ID, color, and size
-      const existingIndex = prevItems.findIndex(
-        (item) =>
-          (item._id || item.product) === (newItem._id || newItem.product) &&
-          item.color?.name === newItem.color?.name &&
-          item.size === newItem.size
-      );
-
-      if (existingIndex > -1) {
-        const updated = [...prevItems];
-        updated[existingIndex] = {
-          ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + (newItem.quantity || 1),
-        };
-        return updated;
-      }
-
-      return [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
-    });
-  }, []);
-
-  const removeFromCart = useCallback(async (itemId, colorName, size, authToken) => {
-    // Optimistically update local cart state
-    setCartItems((prevItems) =>
-      prevItems.filter(
-        (item) =>
-          !((item._id || item.product) === itemId &&
-            (colorName ? (item.color?.name || item.color) === (typeof colorName === "object" ? colorName.name : colorName) : true) &&
-            (size ? item.size === size : true))
-      )
-    );
-
-    // Call backend API if user is authenticated
-    const token = authToken || localStorage.getItem("token");
-    if (token) {
-      try {
-        await deleteCartApi(
-          {
-            productId: itemId,
-            size,
-            color: typeof colorName === "string" ? { name: colorName } : colorName,
-          },
-          token
-        );
-      } catch (e) {
-        console.error("Error removing item from cart on backend:", e.message);
-      }
-    }
-  }, []);
-
-  const updateQuantity = useCallback(async (itemId, colorName, size, quantity, authToken) => {
-    if (quantity <= 0) {
-      removeFromCart(itemId, colorName, size);
-      return;
-    }
-
-    // Optimistically update local context state
-    setCartItems((prevItems) =>
-      prevItems.map((item) => {
-        if (
-          (item._id || item.product) === itemId &&
-          item.color?.name === colorName &&
-          item.size === size
-        ) {
-          return { ...item, quantity };
+    // ─── FETCH ───────────────────────────────────────────────────────────────────
+    // Called when the Checkout page loads to get the user's current cart from the DB
+    const fetchCart = async () => {
+        if (!token) return;
+        setLoading(true);
+        try {
+            const response = await getCart(token);
+            syncCartState(response.data.data);
+        } catch (error) {
+            setToast({ message: error?.response?.data?.message || "Failed to fetch cart", success: false });
+        } finally {
+            setLoading(false);
         }
-        return item;
-      })
+    };
+
+    // ─── ADD ─────────────────────────────────────────────────────────────────────
+    // Called from ProductDetail when user clicks "ADD TO BAG"
+    const addCart = async (cartData) => {
+        if (!token) {
+            setToast({ message: "Please login to add items to cart", type: "error" });
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await addToCart(token, cartData);
+            syncCartState(response.data.data);
+            setToast({ message: "Item added to cart", success: response.data.success });
+        } catch (error) {
+            setToast({ message: error?.response?.data?.message || "Failed to add item", success: false });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ─── UPDATE QUANTITY ─────────────────────────────────────────────────────────
+    // Called from Checkout when user changes item quantity
+    // `item` is the full cart item object (has .product._id, .size, .color)
+    // `quantity` is the new quantity number
+    const updateCartItem = async (item, quantity) => {
+        setLoading(true);
+        try {
+            const payload = {
+                productId: item.product?._id || item.product,  // handle both populated & unpopulated
+                quantity,
+                size: item.size,
+                color: item.color,  // { name, hex }
+            };
+            const response = await updateCart(token, payload);
+            syncCartState(response.data.data);
+            setToast({ message: "Quantity updated", success: true });
+        } catch (error) {
+            setToast({ message: error?.response?.data?.message || "Failed to update item", success: false });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ─── REMOVE ───────────────────────────────────────────────────────────────────
+    // Called from Checkout when user clicks the trash icon
+    // `item` is the full cart item object
+    const removeFromCart = async (item) => {
+        setLoading(true);
+        try {
+            const payload = {
+                productId: item.product?._id || item.product,
+                size: item.size,
+                color: item.color,  // { name, hex }
+            };
+            const response = await deleteCartItem(token, payload);
+            syncCartState(response.data.data);
+            setToast({ message: "Item removed from bag", success: true });
+        } catch (error) {
+            setToast({ message: error?.response?.data?.message || "Failed to remove item", success: false });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <CartContext.Provider value={{ cart, setCart, cartCount, addCart, fetchCart, updateCartItem, removeFromCart }}>
+            {children}
+        </CartContext.Provider>
     );
-
-    // Call backend API if user is authenticated
-    const token = authToken || localStorage.getItem("token");
-    if (token) {
-      try {
-        await updateCartApi(
-          {
-            productId: itemId,
-            quantity,
-            size,
-            color: typeof colorName === "string" ? { name: colorName } : colorName,
-          },
-          token
-        );
-      } catch (e) {
-        console.error("Error updating cart on backend:", e.message);
-      }
-    }
-  }, [removeFromCart]);
-
-  const clearCart = useCallback(() => {
-    setCartItems([]);
-  }, []);
-
-  // Compute total item count efficiently
-  const cartCount = useMemo(() => {
-    return cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
-  }, [cartItems]);
-
-  // Compute total price efficiently
-  const cartTotal = useMemo(() => {
-    return cartItems.reduce((total, item) => {
-      const price = item.price || item.product?.price || 0;
-      return total + price * (item.quantity || 1);
-    }, 0);
-  }, [cartItems]);
-
-  // Memoize value to optimize rendering performance for components consuming cart state
-  const value = useMemo(
-    () => ({
-      cartItems,
-      cartCount,
-      cartTotal,
-      loading,
-      loadCart,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      setCartItems,
-    }),
-    [cartItems, cartCount, cartTotal, loading, loadCart, addToCart, removeFromCart, updateQuantity, clearCart]
-  );
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
-
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
-  return context;
-};
-
-export default CartContext;

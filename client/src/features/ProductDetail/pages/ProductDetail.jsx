@@ -1,86 +1,106 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import "./ProductDetail.css";
 import ProductImageSection from "../components/ProductImageSection.jsx";
 import QuantityAdjuster from "../components/QuantityAdjuster.jsx";
 import Toast from "../../../components/Toast.jsx";
-import { getProductById, addToCart } from "../../../services/apiCalls";
-import { useCart, useAuth } from "../../../hooks";
+import CircularProgress from '@mui/material/CircularProgress';
+import useProduct from "../../../hooks/useProduct.js";
+import useGlobal from "../../../hooks/useGlobal.js";
+import useCart from "../../../hooks/useCart.js";
+// NOTE: mockProducts import hata diya — kahin use nahi ho raha tha (dead import)
 
+const TOAST_DURATION = 3500; // magic number ko ek jagah define kar diya
 
 function ProductDetail() {
-    const navigate = useNavigate();
     const { id } = useParams();
-    const { addToCart: contextAddToCart } = useCart();
-    const { token } = useAuth();
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { product, fetchProductById } = useProduct();
+    const { loading } = useGlobal();
+    const {addCart} = useCart();
+
+
+    // ============ ALL HOOKS GO HERE — TOP LEVEL, NO CONDITIONS ============
+    // React ka strict rule: hooks kabhi bhi if/return/loop ke andar ya
+    // unke baad call nahi hone chahiye. Har render mein hooks ki
+    // count aur order EXACTLY same honi chahiye — isiliye sab hooks
+    // (useState, useEffect, useMemo, useRef) yahan upar, kisi bhi
+    // early return se pehle likhe gaye hain.
 
     // Interactivity states
     const [activeImg, setActiveImg] = useState("");
     const [selectedColor, setSelectedColor] = useState({});
     const [selectedSize, setSelectedSize] = useState({});
     const [quantity, setQuantity] = useState(1);
-    const [stock, setStock] = useState(0);
-    const [cartMessage, setCartMessage] = useState("");
+    // NOTE: `stock` ko alag state se hata diya — yeh selectedSize.stock ka
+    // hi duplicate tha, aur har jagah manually sync karna padta tha
+    // (bug-prone). Neeche derive kar rahe hain seedha selectedSize se.
 
     useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const response = await getProductById(id);
-                if (response && response.data) {
-                    setProduct(response.data);
-                } else {
-                    setError("Product not found");
-                }
-            } catch (err) {
-                console.error("Error fetching product details:", err);
-                setError(err.message || "Failed to fetch product details");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProduct();
-    }, [id]);
+        if (!product || product?._id !== id) {
+            fetchProductById(id);
+        }
+        // fetchProductById ab useCallback se stable hai (Provider mein),
+        // isliye isse deps array mein daalna safe hai — infinite loop nahi banega.
+    }, [id, fetchProductById]);
 
-    // Sync state with product shifts (if user clicks on different products)
+    // Product load hone par default color/size/image set karna
     useEffect(() => {
-        if (product && product.variants && product.variants.length > 0) {
+        if (product?.variants?.length > 0) {
             const defaultVariant = product.variants[0];
             setSelectedColor(defaultVariant.color);
-            if (defaultVariant.sizes && defaultVariant.sizes.length > 0) {
-                // Default to first available size or the first size in list
-                const defaultSize = defaultVariant.sizes.find(s => s.stock > 0) || defaultVariant.sizes[0];
+
+            if (defaultVariant.sizes?.length > 0) {
+                const defaultSize =
+                    defaultVariant.sizes.find(s => s.stock > 0) || defaultVariant.sizes[0];
                 setSelectedSize(defaultSize);
-                setStock(defaultSize.stock || 0);
             } else {
                 setSelectedSize({});
-                setStock(0);
             }
+
+            if (defaultVariant.images?.length > 0) {
+                setActiveImg(defaultVariant.images[0].url);
+            }
+
             setQuantity(1);
-            setCartMessage("");
         }
     }, [product]);
+
+
+    // useMemo: yeh calculation product.variants.find() chalata hai —
+    // agar isse memoize na karein, to yeh HAR render pe dobara chalega.
+    // useMemo isse skip karta hai jab tak deps (product, selectedColor)
+    // actually na badlein.
+    // IMPORTANT: yeh early returns (loading/!product checks) se PEHLE hai,
+    // isliye `product` yahan abhi null bhi ho sakta hai — isliye `?.`
+    // (optional chaining) zaroori hai taaki crash na ho.
+    const currentVariant = useMemo(
+        () => product?.variants?.find(v => v.color?.name === selectedColor?.name) || product?.variants?.[0],
+        [product, selectedColor]
+    );
+
+    // ============ HOOKS KHATAM — ab yahan se normal logic/handlers ============
 
     const handleColorChange = (color) => {
         setSelectedColor(color);
         const targetVariant = product?.variants?.find(v => v.color.name === color.name);
         if (targetVariant) {
-            const defaultSize = targetVariant.sizes.find(s => s.stock > 0) || targetVariant.sizes[0] || {};
+            const defaultSize =
+                targetVariant.sizes.find(s => s.stock > 0) || targetVariant.sizes[0] || {};
             setSelectedSize(defaultSize);
-            setStock(defaultSize.stock || 0);
+            if (targetVariant.images?.length > 0) {
+                setActiveImg(targetVariant.images[0].url);
+            }
             setQuantity(1);
         }
     };
 
     const handleSizeChange = (size) => {
         setSelectedSize(size);
-        setStock(size.stock || 0);
         setQuantity(1);
     };
+
+    // stock ab derived hai — koi separate state nahi, koi sync bug nahi
+    const stock = selectedSize?.stock || 0;
 
     const handleQuantityChange = (newQty) => {
         if (newQty > 0 && newQty <= stock) {
@@ -88,109 +108,100 @@ function ProductDetail() {
         }
     };
 
-   const handleAddToCart = async () => {
-    if (stock === 0) {
-        setCartMessage("This item is currently out of stock.");
-        setTimeout(() => setCartMessage(""), 3500);
-        return;
-    }
+    const handleAddToCart = async () => {
+        if (stock === 0) return;
 
-    if (!token) {
-        setCartMessage("Please login to add items to cart");
-        setTimeout(() => setCartMessage(""), 3500);
-        navigate("/account/auth");
-        return;
-    }
+        // Build the payload as a LOCAL variable — NOT as state.
+        // Reason: setState is async (updates on next render), so if we did
+        // setCartData({...}) and then addCart(cartData), cartData would
+        // still be the OLD empty {} value. Local variable = immediate.
+        const payload = {
+            product: id,
+            quantity: quantity,
+            size: selectedSize.size,
+            color: selectedColor,          // { name, hex }
+            image: currentVariant?.images?.[0],
+            stock: selectedSize.stock,
+        };
 
-    const data = {
-        _id: product._id,
-        product: product._id,
-        title: product.title,
-        price: product.price,
-        quantity,
-        size: selectedSize.size,
-        color: selectedColor,
-        image: variantImages[0],
+        await addCart(payload);
     };
 
-    try {
-        const response = await addToCart(data, token);
-        contextAddToCart(data);
-
-        console.log(response)
-
-        setCartMessage(response?.message || "Added to cart successfully!");
-        setTimeout(() => setCartMessage(""), 3500);
-
-    } catch (e) {
-        setCartMessage(e.message);
-        setTimeout(() => setCartMessage(""), 3500);
-    }
-};
-
+    // ============ EARLY RETURNS — ab yahan aate hain, sab hooks ke baad ============
 
     if (loading) {
         return (
             <div className="product-detail-loading">
-                <div className="spinner"></div>
+                <div className="loading">
+                    <CircularProgress size="4rem" color="inherit" />
+                </div>
                 <p>Loading product details...</p>
             </div>
         );
     }
 
-    if (error || !product) {
+    if (!product) {
         return (
             <div className="product-detail-error">
                 <h2>Oops!</h2>
-                <p>{error || "Product not found"}</p>
+                <p>Product not found</p>
             </div>
         );
     }
 
-    const currentVariant = product.variants.find(v => v.color.name === selectedColor.name) || product.variants[0];
-    const variantImages = currentVariant?.images || [];
+    // yahan se product guaranteed non-null hai
+    const variantImages = currentVariant?.images || (product.featuredImage ? [product.featuredImage] : []);
 
     return (
         <div className="product-detail-container">
-            <Toast message={cartMessage} />
 
             <div className="product-detail-grid">
                 <ProductImageSection images={variantImages} activeImg={activeImg} setActiveImg={setActiveImg} />
                 <div className="product-description-section">
                     <h1 className="product-title">{product.title}</h1>
                     <div className="price-container">
-                        <span className="product-price">${product.price}</span>
+                        <span className="product-price">₹{product.price}</span>
+                        {product.oldPrice && (
+                            // NOTE: inline style ko CSS class mein move kar diya
+                            // (.product-old-price) — neeche CSS snippet mein diya hai
+                            <span className="product-old-price">
+                                ₹{product.oldPrice}
+                            </span>
+                        )}
                     </div>
 
                     <div className="colors">
-                        <p className="option-label">Color: <span className="selected-value">{selectedColor.name || ""}</span></p>
+                        <p className="option-label">Color: <span className="selected-value">{selectedColor?.name || ""}</span></p>
                         <div className="color-options-list">
-                            {product.variants.map((variant, index) => (
-                                <div
+                            {product.variants?.map((variant, index) => (
+                                // div ki jagah button use kiya — keyboard/accessibility
+                                // ke liye better hai (size options mein already button tha)
+                                <button
                                     key={index}
-                                    className={`color-circle-wrapper ${selectedColor.name === variant.color.name ? "active" : ""}`}
+                                    type="button"
+                                    aria-label={variant.color?.name}
+                                    className={`color-circle-wrapper ${selectedColor?.name === variant.color?.name ? "active" : ""}`}
                                     onClick={() => handleColorChange(variant.color)}
                                 >
-                                    <div
+                                    <span
                                         className="color-circle"
-                                        style={{ backgroundColor: variant.color.hex }}
-                                        title={variant.color.name}
-                                    ></div>
-                                </div>
+                                        style={{ backgroundColor: variant.color?.hex }}
+                                    />
+                                </button>
                             ))}
                         </div>
                     </div>
 
                     <div className="sizes">
                         <div className="sizes-header">
-                            <p className="option-label">Size: <span className="selected-value">{selectedSize.size || ""}</span></p>
+                            <p className="option-label">Size: <span className="selected-value">{selectedSize?.size || ""}</span></p>
                             <button className="size-chart-trigger">Size Chart</button>
                         </div>
                         <div className="size-options-list">
                             {currentVariant?.sizes?.map((size, index) => (
                                 <button
                                     key={index}
-                                    className={`size-box ${selectedSize.size === size.size ? "active" : ""} ${size.stock === 0 ? "out-of-stock" : ""}`}
+                                    className={`size-box ${selectedSize?.size === size.size ? "active" : ""} ${size.stock === 0 ? "out-of-stock" : ""}`}
                                     onClick={() => handleSizeChange(size)}
                                     disabled={size.stock === 0}
                                 >
@@ -211,8 +222,7 @@ function ProductDetail() {
                     </div>
 
                     <div className="btn">
-                        <QuantityAdjuster quantity={quantity} onChange={handleQuantityChange} />
-
+                        <QuantityAdjuster quantity={quantity} stock={stock} onChange={handleQuantityChange} />
                         <button
                             className="add-to-cart-button"
                             onClick={handleAddToCart}
@@ -226,7 +236,7 @@ function ProductDetail() {
                         <h3 className="description-title">Product details</h3>
                         <p className="description-text">{product.description}</p>
 
-                        {product.highlights && product.highlights.length > 0 && (
+                        {product.highlights?.length > 0 && (
                             <ul className="details-list">
                                 {product.highlights.map((highlight, index) => (
                                     <li key={index} className="details-list-item">

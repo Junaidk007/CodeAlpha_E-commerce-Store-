@@ -1,41 +1,26 @@
 import "./LoginForm.css";
-import { loginUser } from "../../../services/apiCalls";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../hooks";
+import CircularProgress from '@mui/material/CircularProgress';
 
-function LoginForm({setData, setTostMsg}) {
-    const { login } = useAuth();
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-      email: "",
-      password: "",
-    });
-  
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-  
-    const handleSubmit = async(e) => {
-      e.preventDefault();
-      
-     try {
-      const data = await loginUser(formData);
-      if (setData) setData(data);
-      if (setTostMsg) setTostMsg(data?.message);
-      login(data);
-      console.log(data);
-     } catch (error) {
-      if (setData) setData(error.response?.data);
-      if (setTostMsg) setTostMsg(error.response?.data?.message);
-      console.log(error);
-     }
-  
-     if (setTostMsg) setTimeout(() => setTostMsg(""), 3000);
-     navigate("/");
-    };
-  
+function LoginForm({ signIn, user, token, loading }) {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await signIn(formData);
+    console.log(user , token);
+    if(token) navigate("/");
+  };
 
   return (
     <div className="login-form-container" id="login-form-container">
@@ -70,8 +55,8 @@ function LoginForm({setData, setTostMsg}) {
           />
         </div>
 
-        <button type="submit" className="auth-submit-btn" id="login-submit-btn">
-          Sign In
+        <button type="submit" className="auth-submit-btn" id="login-submit-btn" disabled={loading}>
+          {loading ? <CircularProgress size="1rem"  color="inherit" /> : "Sign In"}
         </button>
       </form>
 

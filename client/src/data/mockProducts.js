@@ -1,9 +1,17 @@
-const mongoose = require('mongoose');
-const env = require('../config/env.config');
-const Product = require('../modules/products/product.model');
+import poloT from "../assets/products/poloT.webp";
+import oversizedTshirt from "../assets/products/oversized-tshirt.webp";
+import mensBlackOversized from "../assets/products/mens-black-oversized.webp";
+import oversizedt from "../assets/products/oversizedt.jpg";
+import checkshirt from "../assets/products/checkshirt.webp";
+import blazer from "../assets/products/blazer.png";
+import culotte from "../assets/products/culotte.png";
+import knitwear from "../assets/products/knitwear.png";
+import topImg from "../assets/products/top.webp";
+import trousers from "../assets/products/trousers.png";
 
-const products = [
+export const mockProducts = [
   {
+    _id: "prod-1",
     title: "Contrast Tipping Zipper Polo T-Shirt",
     price: 1299,
     oldPrice: 1599,
@@ -14,18 +22,14 @@ const products = [
       "Contrast ribbed collar and sleeve cuffs",
       "Regular comfortable fit"
     ],
-    isFeatured: true,
-    featuredImage: {
-      url: "/assets/products/poloT.webp",
-      filename: "poloT.webp"
-    },
+    featuredImage: { url: poloT, filename: "poloT.webp" },
     variants: [
       {
         color: { name: "Sage Green", hex: "#556B2F" },
         images: [
-          { url: "/assets/products/poloT.webp", filename: "poloT-1.webp" },
-          { url: "/assets/products/oversized-tshirt.webp", filename: "poloT-2.webp" },
-          { url: "/assets/products/mens-black-oversized.webp", filename: "poloT-3.webp" }
+          { url: poloT, filename: "poloT-1.webp" },
+          { url: oversizedTshirt, filename: "poloT-2.webp" },
+          { url: mensBlackOversized, filename: "poloT-3.webp" }
         ],
         sizes: [
           { size: "S", stock: 12 },
@@ -38,8 +42,8 @@ const products = [
       {
         color: { name: "Midnight Black", hex: "#1C1C1C" },
         images: [
-          { url: "/assets/products/mens-black-oversized.webp", filename: "poloT-black.webp" },
-          { url: "/assets/products/poloT.webp", filename: "poloT-black-2.webp" }
+          { url: mensBlackOversized, filename: "poloT-black.webp" },
+          { url: poloT, filename: "poloT-black-2.webp" }
         ],
         sizes: [
           { size: "S", stock: 4 },
@@ -51,8 +55,8 @@ const products = [
       {
         color: { name: "Charcoal", hex: "#36454F" },
         images: [
-          { url: "/assets/products/oversizedt.jpg", filename: "poloT-charcoal.jpg" },
-          { url: "/assets/products/poloT.webp", filename: "poloT-charcoal-2.webp" }
+          { url: oversizedt, filename: "poloT-charcoal.jpg" },
+          { url: poloT, filename: "poloT-charcoal-2.webp" }
         ],
         sizes: [
           { size: "S", stock: 6 },
@@ -63,6 +67,7 @@ const products = [
     ]
   },
   {
+    _id: "prod-2",
     title: "Heavyweight Boxy Oversized Tee",
     price: 899,
     oldPrice: 1199,
@@ -73,17 +78,13 @@ const products = [
       "Pre-shrunk fabric to preserve drape and fit",
       "Twin-needle stitching throughout"
     ],
-    isFeatured: true,
-    featuredImage: {
-      url: "/assets/products/oversized-tshirt.webp",
-      filename: "oversized-tshirt.webp"
-    },
+    featuredImage: { url: oversizedTshirt, filename: "oversized-tshirt.webp" },
     variants: [
       {
         color: { name: "Off White", hex: "#F8F8F6" },
         images: [
-          { url: "/assets/products/oversized-tshirt.webp", filename: "oversized-1.webp" },
-          { url: "/assets/products/oversizedt.jpg", filename: "oversized-2.jpg" }
+          { url: oversizedTshirt, filename: "oversized-1.webp" },
+          { url: oversizedt, filename: "oversized-2.jpg" }
         ],
         sizes: [
           { size: "S", stock: 10 },
@@ -95,7 +96,7 @@ const products = [
       {
         color: { name: "Washed Slate", hex: "#4A5568" },
         images: [
-          { url: "/assets/products/mens-black-oversized.webp", filename: "oversized-black.webp" }
+          { url: mensBlackOversized, filename: "oversized-black.webp" }
         ],
         sizes: [
           { size: "S", stock: 8 },
@@ -106,6 +107,7 @@ const products = [
     ]
   },
   {
+    _id: "prod-3",
     title: "Relaxed Fit Plaid Check Flannel Shirt",
     price: 1899,
     oldPrice: 2299,
@@ -116,17 +118,13 @@ const products = [
       "Subtle curved hemline",
       "Machine washable"
     ],
-    isFeatured: true,
-    featuredImage: {
-      url: "/assets/products/checkshirt.webp",
-      filename: "checkshirt.webp"
-    },
+    featuredImage: { url: checkshirt, filename: "checkshirt.webp" },
     variants: [
       {
         color: { name: "Forest Plaid", hex: "#2E4F4F" },
         images: [
-          { url: "/assets/products/checkshirt.webp", filename: "checkshirt-1.webp" },
-          { url: "/assets/products/poloT.webp", filename: "checkshirt-2.webp" }
+          { url: checkshirt, filename: "checkshirt-1.webp" },
+          { url: poloT, filename: "checkshirt-2.webp" }
         ],
         sizes: [
           { size: "S", stock: 5 },
@@ -138,6 +136,7 @@ const products = [
     ]
   },
   {
+    _id: "prod-4",
     title: "Tailored Minimalist Wool Blazer",
     price: 3499,
     oldPrice: 4299,
@@ -148,17 +147,13 @@ const products = [
       "Interior welt passport pocket",
       "Dry clean only"
     ],
-    isFeatured: true,
-    featuredImage: {
-      url: "/assets/products/blazer.png",
-      filename: "blazer.png"
-    },
+    featuredImage: { url: blazer, filename: "blazer.png" },
     variants: [
       {
         color: { name: "Onyx Black", hex: "#1A1A1A" },
         images: [
-          { url: "/assets/products/blazer.png", filename: "blazer-1.png" },
-          { url: "/assets/products/knitwear.png", filename: "blazer-2.png" }
+          { url: blazer, filename: "blazer-1.png" },
+          { url: knitwear, filename: "blazer-2.png" }
         ],
         sizes: [
           { size: "38R", stock: 3 },
@@ -169,6 +164,7 @@ const products = [
     ]
   },
   {
+    _id: "prod-5",
     title: "Fine Gauge Merino Knitwear Sweater",
     price: 2199,
     oldPrice: 2699,
@@ -179,17 +175,13 @@ const products = [
       "Lightweight yet warm",
       "Breathable and odor resistant"
     ],
-    isFeatured: false,
-    featuredImage: {
-      url: "/assets/products/knitwear.png",
-      filename: "knitwear.png"
-    },
+    featuredImage: { url: knitwear, filename: "knitwear.png" },
     variants: [
       {
         color: { name: "Camel", hex: "#C19A6B" },
         images: [
-          { url: "/assets/products/knitwear.png", filename: "knitwear-1.png" },
-          { url: "/assets/products/top.webp", filename: "knitwear-2.webp" }
+          { url: knitwear, filename: "knitwear-1.png" },
+          { url: topImg, filename: "knitwear-2.webp" }
         ],
         sizes: [
           { size: "S", stock: 6 },
@@ -200,6 +192,7 @@ const products = [
     ]
   },
   {
+    _id: "prod-6",
     title: "Pleated Wide Leg Casual Trousers",
     price: 1799,
     oldPrice: 2199,
@@ -210,17 +203,13 @@ const products = [
       "Side slant pockets & rear welt pockets",
       "Concealed zip fly and hook bar closure"
     ],
-    isFeatured: false,
-    featuredImage: {
-      url: "/assets/products/trousers.png",
-      filename: "trousers.png"
-    },
+    featuredImage: { url: trousers, filename: "trousers.png" },
     variants: [
       {
         color: { name: "Charcoal Grey", hex: "#43464B" },
         images: [
-          { url: "/assets/products/trousers.png", filename: "trousers-1.png" },
-          { url: "/assets/products/culotte.png", filename: "trousers-2.png" }
+          { url: trousers, filename: "trousers-1.png" },
+          { url: culotte, filename: "trousers-2.png" }
         ],
         sizes: [
           { size: "30", stock: 5 },
@@ -232,6 +221,7 @@ const products = [
     ]
   },
   {
+    _id: "prod-7",
     title: "Cropped Ribbed Sleeveless Top",
     price: 799,
     oldPrice: 999,
@@ -241,16 +231,12 @@ const products = [
       "Flattering wide binding at neck and armholes",
       "Retains shape wash after wash"
     ],
-    isFeatured: false,
-    featuredImage: {
-      url: "/assets/products/top.webp",
-      filename: "top.webp"
-    },
+    featuredImage: { url: topImg, filename: "top.webp" },
     variants: [
       {
         color: { name: "Alabaster", hex: "#F3EDE2" },
         images: [
-          { url: "/assets/products/top.webp", filename: "top-1.webp" }
+          { url: topImg, filename: "top-1.webp" }
         ],
         sizes: [
           { size: "XS", stock: 7 },
@@ -261,6 +247,7 @@ const products = [
     ]
   },
   {
+    _id: "prod-8",
     title: "High-Rise Cropped Culotte Pants",
     price: 1699,
     oldPrice: 1999,
@@ -270,16 +257,12 @@ const products = [
       "High-rise fitted waistband",
       "Relaxed wide leg silhouette"
     ],
-    isFeatured: false,
-    featuredImage: {
-      url: "/assets/products/culotte.png",
-      filename: "culotte.png"
-    },
+    featuredImage: { url: culotte, filename: "culotte.png" },
     variants: [
       {
         color: { name: "Sand", hex: "#D6C6B2" },
         images: [
-          { url: "/assets/products/culotte.png", filename: "culotte-1.png" }
+          { url: culotte, filename: "culotte-1.png" }
         ],
         sizes: [
           { size: "S", stock: 4 },
@@ -291,27 +274,27 @@ const products = [
   }
 ];
 
-async function seedDatabase() {
-  try {
-    console.log("Connecting to database...");
-    await mongoose.connect(env.MONGO_URI);
-    console.log("Connected to MongoDB Atlas!");
-
-    console.log("Clearing existing products...");
-    await Product.deleteMany({});
-    console.log("Existing products cleared.");
-
-    console.log("Inserting sample products...");
-    const createdProducts = await Product.insertMany(products);
-    console.log(`Successfully seeded ${createdProducts.length} products!`);
-
-    await mongoose.disconnect();
-    console.log("Disconnected from MongoDB.");
-    process.exit(0);
-  } catch (error) {
-    console.error("Error seeding database:", error);
-    process.exit(1);
+export const mockCartInitial = [
+  {
+    _id: "prod-1",
+    product: "prod-1",
+    title: "Contrast Tipping Zipper Polo T-Shirt",
+    price: 1299,
+    quantity: 1,
+    size: "M",
+    color: "Sage Green",
+    image: { url: poloT, filename: "poloT.webp" },
+    stock: 8
+  },
+  {
+    _id: "prod-2",
+    product: "prod-2",
+    title: "Heavyweight Boxy Oversized Tee",
+    price: 899,
+    quantity: 2,
+    size: "L",
+    color: "Off White",
+    image: { url: oversizedTshirt, filename: "oversized-tshirt.webp" },
+    stock: 12
   }
-}
-
-seedDatabase();
+];

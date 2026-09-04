@@ -3,12 +3,16 @@ import LoginForm from "../components/LoginForm";
 import SignupForm from "../components/SignupForm";
 import Toast from "../../../components/Toast"  
 import "./AuthPage.css";
+import useAuth from "../../../hooks/useAuth.js";
+import useGlobal from "../../../hooks/useGlobal.js";
 
 function AuthPage() {
-  const [data, setData] = useState()
-  const [tostMsg, setTostMsg] = useState('');
+  const { user, token, signUp, signIn } = useAuth();
+  const { loading } = useGlobal();
   const [isMobile, setIsMobile] = useState(false);
   const [activeForm, setActiveForm] = useState("signin"); // 'signin' or 'signup'
+
+
 
   // Screen size detector hook for responsive conditional rendering
   useEffect(() => {
@@ -25,7 +29,6 @@ function AuthPage() {
 
   return (
     <div className="auth-page-wrapper" id="auth-page-wrapper">
-      <Toast message={tostMsg}/>
       <h1 className="auth-welcome-header">Welcome!</h1>
 
       {isMobile ? (
@@ -52,9 +55,9 @@ function AuthPage() {
 
           <div className="auth-form-fade-in">
             {activeForm === "signin" ? (
-              <LoginForm setData={setData} setTostMsg={setTostMsg}/>
+              <LoginForm signIn={signIn} user={user} token={token} loading={loading}/>
             ) : (
-              <SignupForm setData={setData} setTostMsg={setTostMsg}/>
+              <SignupForm signUp={signUp} loading={loading}/>
             )}
           </div>
         </div>
@@ -62,10 +65,10 @@ function AuthPage() {
         // Desktop Grid (Both side-by-side)
         <div className="auth-desktop-grid" id="auth-desktop-grid">
           <div className="auth-grid-column">
-            <LoginForm setData={setData} setTostMsg={setTostMsg}/>
+            <LoginForm signIn={signIn} user={user} token={token} loading={loading}/>
           </div>
           <div className="auth-grid-column">
-            <SignupForm setData={setData} setTostMsg={setTostMsg}/>
+            <SignupForm signUp={signUp} loading={loading}/>
           </div>
         </div>
       )}

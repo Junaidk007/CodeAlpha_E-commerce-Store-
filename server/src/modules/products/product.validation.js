@@ -18,6 +18,10 @@ const productSchema = Joi.object({
         'number.min': 'Price cannot be negative',
         'any.required': 'Price is required'
     }),
+    oldPrice: Joi.number().min(0).optional().messages({
+        'number.base': 'Old price must be a number',
+        'number.min': 'Old price cannot be negative'
+    }),
     variants: Joi.array().items(
         Joi.object({
             color: Joi.object({
@@ -48,8 +52,9 @@ const productSchema = Joi.object({
             }),
             sizes: Joi.array().items(
                 Joi.object({
-                    size: Joi.string().valid("XS", "S", "M", "L", "XL", "XXL").messages({
-                        'any.only': 'Size must be one of XS, S, M, L, XL, XXL'
+                    size: Joi.string().required().messages({
+                        'string.empty': 'Size is required',
+                        'any.required': 'Size is required'
                     }),
                     stock: Joi.number().min(0).default(0).messages({
                         'number.min': 'Stock cannot be negative'

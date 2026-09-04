@@ -1,82 +1,70 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import { createContext, useState } from "react";
+import useGlobal from "../hooks/useGlobal";
+import { signup, signin } from "../service/api";
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
-  const [user, setUser] = useState(() => {
-    try {
-      const savedUser = localStorage.getItem("user");
-      return savedUser ? JSON.parse(savedUser) : null;
-    } catch (e) {
-      return null;
-    }
-  });
-  const [loading, setLoading] = useState(false);
+    const {loading, setLoading, toast, setToast} = useGlobal();
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(localStorage.getItem('token'));
+   
 
-  // Synchronize state changes to localStorage
-  useEffect(() => {
-    if (token) {
-      localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
-    }
-  }, [token]);
+    const signUp = async (userData) => {
+        try {
+            setLoading(true);
+            const response = await signup(userData);
+            console.log(response);
+            setToast({
+                success: response.data.success,
+                message: response.data.message
+            })
+        }
+        catch (error) {
+            setToast({
+                success: false,
+                message: error?.response?.data?.message || "An error occurred",
+            })
+        }
+        finally {
+            setLoading(false);
+        }
+    };
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-    }
-  }, [user]);
+    const signIn = async (userData) => {
+        try {
+            setLoading(true);
+            const response = await signin(userData);
+            if (response.data.success == true) {
+                setToken(response.data.data.token);
+                setUser(response.data.data.user);
+                localStorage.setItem('token', response.data.data.token);
+            }
+            setToast({
+                success: response.data.success,
+                message: response.data.message
+            });
+        }
+        catch (error) {
+            setToast({
+                success: false,
+                message: error?.response?.data?.message || "An error occurred",
+            });
+        }
+        finally {
+            setLoading(false);
+        }
+    };
 
-  const login = useCallback((authData) => {
-    // Expecting authData to contain user & token or data object from API
-    const userToken = authData?.token || authData?.data?.token || authData;
-    const userData = authData?.user || authData?.data?.user || null;
+    const logout = () => {
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem('token');
+    };
 
-    if (typeof userToken === "string") {
-      setToken(userToken);
-    }
-    if (userData) {
-      setUser(userData);
-    }
-  }, []);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setUser(null);
-    // localStorage.removeItem("token");
-    // localStorage.removeItem("user");
-  }, []);
-
-  const isAuthenticated = Boolean(token);
-
-  // Memoize value to optimize rendering performance for consumers
-  const value = useMemo(
-    () => ({
-      user,
-      token,
-      isAuthenticated,
-      loading,
-      setLoading,
-      login,
-      logout,
-      setUser,
-    }),
-    [user, token, isAuthenticated, loading, login, logout]
-  );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={{ user, token, signUp, signIn, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-export default AuthContext;

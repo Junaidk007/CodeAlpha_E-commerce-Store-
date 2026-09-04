@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useCart, useAuth } from "../hooks";
 import "./Navbar.css";
+import useCart from "../hooks/useCart";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { cartCount } = useCart();
-  const { isAuthenticated, logout } = useAuth();
+  const {cartCount} = useCart();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
